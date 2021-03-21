@@ -2,75 +2,82 @@
 import React, { useEffect, useState } from 'react';
 import './DataReader.css';
 
-const useTemp = () =>
-{
-    const [tempClass, setTempClass]  = useState('good');
 
-    function setTemp(data) 
+const useTemperature = () =>
+{
+    const [temperatureClass, setTemperatureClass]  = useState('good');
+
+    function setTempClass(temperature) 
     {
-        if(data < 18 ) setTempClass('cold');
-        if(data > 23) setTempClass('hot');
+        if(temperature < 18 ) setTemperatureClass('cold');
+        if(temperature > 23) setTemperatureClass('hot');
     }
     
-    return [tempClass, setTemp];
+    return [temperatureClass, setTempClass];
 };
+
+
+const useLastUpdate = () =>
+{
+    const [lastUpdate, setLastUpdate] = useState();
+
+    function formatLastUpdateDate()
+    {
+        var date = new Date();
+        setLastUpdate(`${date.toLocaleDateString()} ${date.toLocaleTimeString()}`);
+    }
+
+    return [lastUpdate, formatLastUpdateDate];
+};
+
 
 export default function DataReader({ id, title, isTemp }) 
 {
     // Default useState
-    const [data, setData] = useState('');
-    const [error, setError] = useState(false);
-    const [errorData, setErrorData] = useState();
-    const [lastUpdate, setLastUpdate] = useState();
-
+    const [dataFromJeedomApi, setDataFromJeedomApi] = useState('');
+    const [error, setError] = useState('');
+    
     // Custom Hook
-    const [temp, setTemp] = useTemp(0);
+    const [temperatureClass, setTemperatureClass] = useTemperature(0);
+    const [lastUpdate, setLastUpdate] = useLastUpdate();
+
+
+    const processFetchedDataFromJeedomApi = (data) => 
+    {
+        setError('');
+        setDataFromJeedomApi(data);
+        if(isTemp) setTemperatureClass(data);
+        setLastUpdate();
+    };
+
 
     useEffect(() => 
     {
-        const getData = async () => 
+        const fetchJeedomApiData = async () => 
         {
             // eslint-disable-next-line no-undef
             fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${id}`)
-                .then(
-                    (response) => response.text()
-                ).then(
-                    (data) => 
-                    {
-                        setError(false);
-                        setData(data);
-                        setTemp(data);
-                        const dateTime = new Date();
-                        setLastUpdate(`${dateTime.toLocaleDateString()} ${dateTime.toLocaleTimeString()}`);
-                    },
-                ).catch((error) => 
-                {
-                    setErrorData(error);
-                    setError(true);
-                });
+                .then((response) => response.text())
+                .then((dataFromJeedomApi) => processFetchedDataFromJeedomApi(dataFromJeedomApi))
+                .catch((error) => setError(error));
         };
 
-        getData();
+        fetchJeedomApiData();
 
-        setInterval(() => 
-        {
-            getData();
-        }, 15000);
+        setInterval(fetchJeedomApiData, 15000);
     }, []);
 
 
-    if (error) 
+    if (error !== '') 
     {
-        return (
-            <div>Erreur {errorData}</div>
-        );
+        return <div>Erreur {error}</div>;
     }
     
-
+    
     return (
-        <div className={isTemp ? 'card ' + temp:'card'}>
+        <div className={isTemp ? 'card ' + temperatureClass : 'card'}>
             <h2>{title}</h2>
-            <div className="card-data">{data}</div>
+            <div className="card-dataFromJeedomApi">{dataFromJeedomApi}</div>
             <div className="card-update">{lastUpdate}</div>
         </div>
     );
