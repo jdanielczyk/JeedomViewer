@@ -1,0 +1,39 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    border:solid 1px #bbb;
+    border-radius: 6px;
+
+    margin: 6px;
+    padding: 16px;
+
+    min-width: 250px;
+}
+
+.card > h2 {
+    margin: 2px;
+    font-size: 0.9em;
+}
+
+.card-update {
+    color: #ddd;
+    font-size: 0.8em;
+}
+
+.card-data{
+    font-size: 2.5em;
+}
+
+.good {
+    background-color: rgb(126, 204, 126);
+}
+
+.hot {
+    background-color: rgb(204, 161, 126);
+}
+
+.cold {
+    background-color: rgb(126, 157, 204);
+}
