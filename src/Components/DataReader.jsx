@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import './DataReader.css';
 
-
+//Custom hooks
 const useTemperature = () =>
 {
     const [temperatureClass, setTemperatureClass]  = useState('good');
@@ -30,55 +30,80 @@ const useLastUpdate = () =>
     return [lastUpdate, formatLastUpdateDate];
 };
 
+//--------------------------------------------------------
 
 export default function DataReader({ id, title, isTemp }) 
 {
     // Default useState
     const [dataFromJeedomApi, setDataFromJeedomApi] = useState('');
-    const [error, setError] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [fetchJeedomApiDataOnceAtStart, setFetchJeedomApiDataAtStart] = useState(true);
     
     // Custom Hook
     const [temperatureClass, setTemperatureClass] = useTemperature(0);
     const [lastUpdate, setLastUpdate] = useLastUpdate();
 
 
-    const processFetchedDataFromJeedomApi = (data) => 
+    const processFetchedDataFromJeedomApi = (success, data) => 
     {
-        setError('');
-        setDataFromJeedomApi(data);
-        if(isTemp) setTemperatureClass(data);
-        setLastUpdate();
+        if(success === false)
+        {
+            setErrorMessage(data);
+            return;
+        }
+        else
+        {
+            setErrorMessage('');
+            setDataFromJeedomApi(data);
+            if(isTemp) setTemperatureClass(data);
+            setLastUpdate();
+        }
     };
 
 
+    const fetchJeedomApiData = async () => 
+    {
+        // eslint-disable-next-line no-undef
+        fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${id}`)
+            .then((response) => response.text())
+            .then((dataFromJeedomApi) => processFetchedDataFromJeedomApi(true, dataFromJeedomApi))
+            .catch((error) => processFetchedDataFromJeedomApi(false, error));
+    };
+
+    
     useEffect(() => 
     {
-        const fetchJeedomApiData = async () => 
+        if(fetchJeedomApiDataOnceAtStart)
         {
-            // eslint-disable-next-line no-undef
-            fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${id}`)
-                .then((response) => response.text())
-                .then((dataFromJeedomApi) => processFetchedDataFromJeedomApi(dataFromJeedomApi))
-                .catch((error) => setError(error));
+            fetchJeedomApiData();
+            setFetchJeedomApiDataAtStart(false);
+        }
+
+        const fetchInterval = setInterval(()=>
+        {
+            fetchJeedomApiData();
+        }, 15000);
+
+        return () =>
+        {   
+            clearInterval(fetchInterval);
         };
-
-        fetchJeedomApiData();
-
-        setInterval(fetchJeedomApiData, 15000);
-    }, []);
+    },[]);
 
 
-    if (error !== '') 
+    if (errorMessage !== '') 
     {
-        return <div>Erreur {error}</div>;
+        return <div>Erreur {errorMessage}</div>;
     }
     
-    
+
     return (
         <div className={isTemp ? 'card ' + temperatureClass : 'card'}>
             <h2>{title}</h2>
-            <div className="card-dataFromJeedomApi">{dataFromJeedomApi}</div>
+            <div className="card-data">{dataFromJeedomApi}</div>
             <div className="card-update">{lastUpdate}</div>
+
+            <button onClick={fetchJeedomApiData}>Refresh</button>
         </div>
     );
 }
