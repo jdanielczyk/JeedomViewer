@@ -102,8 +102,6 @@ export default function DataReader({ id, title, isTemp })
             <h2>{title}</h2>
             <div className="card-data">{dataFromJeedomApi}</div>
             <div className="card-update">{lastUpdate}</div>
-
-            <button onClick={fetchJeedomApiData}>Refresh</button>
         </div>
     );
 }
