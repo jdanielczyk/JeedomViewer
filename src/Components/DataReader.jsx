@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import './DataReader.css';
 
-//Custom hooks
+
 const useTemperature = () =>
 {
     const [temperatureClass, setTemperatureClass]  = useState('good');
@@ -17,47 +17,29 @@ const useTemperature = () =>
 };
 
 
-const useLastUpdate = () =>
+const getFormatedDateTime = () =>
 {
-    const [lastUpdate, setLastUpdate] = useState();
-
-    function formatLastUpdateDate()
-    {
-        var date = new Date();
-        setLastUpdate(`${date.toLocaleDateString()} ${date.toLocaleTimeString()}`);
-    }
-
-    return [lastUpdate, formatLastUpdateDate];
+    var date = new Date();
+    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 };
 
-//--------------------------------------------------------
 
 export default function DataReader({ id, title, isTemp }) 
 {
     // Default useState
     const [dataFromJeedomApi, setDataFromJeedomApi] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [fetchJeedomApiDataOnceAtStart, setFetchJeedomApiDataAtStart] = useState(true);
+    const [lastUpdate, setLastUpdate] = useState(getFormatedDateTime());
     
-    // Custom Hook
+    // Custom hook
     const [temperatureClass, setTemperatureClass] = useTemperature(0);
-    const [lastUpdate, setLastUpdate] = useLastUpdate();
-
-
-    const processFetchedDataFromJeedomApi = (success, data) => 
+    
+    const processFetchedSuccessDataFromJeedomApi = (data) => 
     {
-        if(success === false)
-        {
-            setErrorMessage(data);
-            return;
-        }
-        else
-        {
-            setErrorMessage('');
-            setDataFromJeedomApi(data);
-            if(isTemp) setTemperatureClass(data);
-            setLastUpdate();
-        }
+        setErrorMessage('');
+        setDataFromJeedomApi(data);
+        if(isTemp) setTemperatureClass(data);
+        setLastUpdate(getFormatedDateTime());
     };
 
 
@@ -66,29 +48,24 @@ export default function DataReader({ id, title, isTemp })
         // eslint-disable-next-line no-undef
         fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${id}`)
             .then((response) => response.text())
-            .then((dataFromJeedomApi) => processFetchedDataFromJeedomApi(true, dataFromJeedomApi))
-            .catch((error) => processFetchedDataFromJeedomApi(false, error));
+            .then((dataFromJeedomApi) => processFetchedSuccessDataFromJeedomApi(dataFromJeedomApi))
+            .catch((error) => setErrorMessage(error));
     };
 
     
     useEffect(() => 
     {
-        if(fetchJeedomApiDataOnceAtStart)
+        // fetch before first setTimout
+        // dataFromJeedomApi don’t stay empty until first setTimeout
+        if(dataFromJeedomApi ==='') fetchJeedomApiData();
+
+        const timeout = setTimeout(()=>
         {
             fetchJeedomApiData();
-            setFetchJeedomApiDataAtStart(false);
-        }
+        }, 10000);
 
-        const fetchInterval = setInterval(()=>
-        {
-            fetchJeedomApiData();
-        }, 15000);
-
-        return () =>
-        {   
-            clearInterval(fetchInterval);
-        };
-    },[]);
+        return () => clearTimeout(timeout);
+    });
 
 
     if (errorMessage !== '') 
@@ -102,8 +79,6 @@ export default function DataReader({ id, title, isTemp })
             <h2>{title}</h2>
             <div className="card-data">{dataFromJeedomApi}</div>
             <div className="card-update">{lastUpdate}</div>
-
-            <button onClick={fetchJeedomApiData}>Refresh</button>
         </div>
     );
 }
