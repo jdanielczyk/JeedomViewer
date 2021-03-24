@@ -27,7 +27,7 @@ export default function DataReader({ commandId, title, isTemp })
     const [lastUpdate, setLastUpdate] = useState(getFormatedDateTime());
     
 
-    const fetchJeedomApiData = async () => 
+    const fetchDataFromJeedomApi = async () => 
     {
         // eslint-disable-next-line no-undef
         fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${commandId}`)
@@ -48,11 +48,11 @@ export default function DataReader({ commandId, title, isTemp })
     useEffect(() => 
     {
         // Don’t wait the first setTimeout for fetch
-        if(dataFromJeedomApi ==='') fetchJeedomApiData();
+        if(dataFromJeedomApi ==='') fetchDataFromJeedomApi();
 
         const timeout = setTimeout(()=>
         {
-            fetchJeedomApiData();
+            fetchDataFromJeedomApi();
         }, 30000);
 
         return () => clearTimeout(timeout);
