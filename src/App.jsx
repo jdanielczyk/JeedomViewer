@@ -7,10 +7,10 @@ function App()
 {
     return (
         <div className="App">
-            <DataReader title="Mode" id="266" />
-            <DataReader title="Température bureau" id="640" isTemp={true}/>
-            <DataReader title="Température étage" id="432" isTemp={true}/>
-            <DataReader title="Température RDC" id="431" isTemp={true}/>
+            <DataReader title="Mode" commandId="266" />
+            <DataReader title="Température bureau" commandId="640" isTemp={true}/>
+            <DataReader title="Température étage" commandId="432" isTemp={true}/>
+            <DataReader title="Température RDC" commandId="431" isTemp={true}/>
         </div>
     );
 }
