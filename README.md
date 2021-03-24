@@ -14,8 +14,19 @@ Get command id from Jeedom
 ![screen-3](screen-2.png?raw=true)
 
 Set command id in `App.jsx`
-![code-1](code-1.png?raw=true)
-
+```javascript
+function App() 
+{
+    return (
+        <div className="App">
+            <DataReader title="Mode" commandId="266" />
+            <DataReader title="Température bureau" commandId="640" isTemp={true}/>
+            <DataReader title="Température étage" commandId="432" isTemp={true}/>
+            <DataReader title="Température RDC" commandId="431" isTemp={true}/>
+        </div>
+    );
+}
+```
 Then we can run `npm init` and `npm start`
 
 
