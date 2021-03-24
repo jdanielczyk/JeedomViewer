@@ -27,14 +27,6 @@ export default function DataReader({ commandId, title, isTemp })
     const [lastUpdate, setLastUpdate] = useState(getFormatedDateTime());
     
 
-    const onSuccessFetchedDataFromJeedomApi = (data) => 
-    {
-        setErrorMessage('');
-        setDataFromJeedomApi(data);
-        setLastUpdate(getFormatedDateTime());
-    };
-
-
     const fetchJeedomApiData = async () => 
     {
         // eslint-disable-next-line no-undef
@@ -44,7 +36,15 @@ export default function DataReader({ commandId, title, isTemp })
             .catch((error) => setErrorMessage(error));
     };
 
+
+    const onSuccessFetchedDataFromJeedomApi = (data) => 
+    {
+        setErrorMessage('');
+        setDataFromJeedomApi(data);
+        setLastUpdate(getFormatedDateTime());
+    };
     
+
     useEffect(() => 
     {
         // Don’t wait the first setTimeout for fetch
