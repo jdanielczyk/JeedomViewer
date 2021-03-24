@@ -3,17 +3,12 @@ import React, { useEffect, useState } from 'react';
 import './DataReader.css';
 
 
-const useTemperature = () =>
+const getTemperatureClass = (temperature) =>
 {
-    const [temperatureClass, setTemperatureClass]  = useState('good');
-
-    function setTempClass(temperature) 
-    {
-        if(temperature < 18 ) setTemperatureClass('cold');
-        if(temperature > 23) setTemperatureClass('hot');
-    }
-    
-    return [temperatureClass, setTempClass];
+    let temperatureClass = 'good';
+    if(temperature < 18 ) temperatureClass = 'cold'; 
+    if(temperature > 23) temperatureClass = 'hot';
+    return temperatureClass;
 };
 
 
@@ -24,21 +19,18 @@ const getFormatedDateTime = () =>
 };
 
 
-export default function DataReader({ id, title, isTemp }) 
+export default function DataReader({ commandId, title, isTemp }) 
 {
     // Default useState
     const [dataFromJeedomApi, setDataFromJeedomApi] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [lastUpdate, setLastUpdate] = useState(getFormatedDateTime());
     
-    // Custom hook
-    const [temperatureClass, setTemperatureClass] = useTemperature(0);
-    
-    const processFetchedSuccessDataFromJeedomApi = (data) => 
+
+    const onSuccessFetchedDataFromJeedomApi = (data) => 
     {
         setErrorMessage('');
         setDataFromJeedomApi(data);
-        if(isTemp) setTemperatureClass(data);
         setLastUpdate(getFormatedDateTime());
     };
 
@@ -46,23 +38,22 @@ export default function DataReader({ id, title, isTemp })
     const fetchJeedomApiData = async () => 
     {
         // eslint-disable-next-line no-undef
-        fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${id}`)
+        fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${commandId}`)
             .then((response) => response.text())
-            .then((dataFromJeedomApi) => processFetchedSuccessDataFromJeedomApi(dataFromJeedomApi))
+            .then((dataFromJeedomApi) => onSuccessFetchedDataFromJeedomApi(dataFromJeedomApi))
             .catch((error) => setErrorMessage(error));
     };
 
     
     useEffect(() => 
     {
-        // fetch before first setTimout
-        // dataFromJeedomApi don’t stay empty until first setTimeout
+        // Don’t wait the first setTimeout for fetch
         if(dataFromJeedomApi ==='') fetchJeedomApiData();
 
         const timeout = setTimeout(()=>
         {
             fetchJeedomApiData();
-        }, 10000);
+        }, 30000);
 
         return () => clearTimeout(timeout);
     });
@@ -75,7 +66,7 @@ export default function DataReader({ id, title, isTemp })
     
 
     return (
-        <div className={isTemp ? 'card ' + temperatureClass : 'card'}>
+        <div className={isTemp ? 'card ' + getTemperatureClass(dataFromJeedomApi) : 'card'}>
             <h2>{title}</h2>
             <div className="card-data">{dataFromJeedomApi}</div>
             <div className="card-update">{lastUpdate}</div>
