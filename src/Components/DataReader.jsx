@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './DataReader.css';
 
 
-const getTemperatureClass = (temperature) =>
+export const getTemperatureClass = (temperature) =>
 {
     let temperatureClass = 'good';
     if(temperature < 18 ) temperatureClass = 'cold'; 
@@ -12,14 +12,14 @@ const getTemperatureClass = (temperature) =>
 };
 
 
-const getFormatedDateTime = () =>
+export const getFormatedDateTime = () =>
 {
     var date = new Date();
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 };
 
 
-export default function DataReader({ commandId, title, isTemp }) 
+export function DataReader({ commandId, title, isTemp }) 
 {
     // Default useState
     const [dataFromJeedomApi, setDataFromJeedomApi] = useState('');
@@ -33,7 +33,7 @@ export default function DataReader({ commandId, title, isTemp })
         fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${commandId}`)
             .then((response) => response.text())
             .then((dataFromJeedomApi) => onSuccessFetchedDataFromJeedomApi(dataFromJeedomApi))
-            .catch((error) => setErrorMessage(error));
+            .catch((error) => setErrorMessage('Erreur: ' + error));
     };
 
 
