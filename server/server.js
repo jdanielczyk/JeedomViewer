@@ -6,6 +6,7 @@ const port = 4000;
 const path = require('path');
 // eslint-disable-next-line no-undef
 const users = require('./user');
+// eslint-disable-next-line no-undef
 const cors = require('cors');
 
 
@@ -61,6 +62,7 @@ app.post('/api/login',
     (req, res) => res.json({success:true})
 );
 
+// eslint-disable-next-line no-undef
 app.get('/',(req,res) => res.sendFile(path.join(__dirname, '../build', 'index.html')));
 
 

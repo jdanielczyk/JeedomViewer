@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
+import {useHistory} from 'react-router-dom';
+
 import './Login.css';
 
 export default function Login () 
 {
+    let history = useHistory();
+    const [hasError, setHasError] = useState(false);
+
     const sendLoginPassword = (e) =>
     {
         e.preventDefault();
@@ -30,8 +35,8 @@ export default function Login ()
 
         fetch('http://localhost:4000/api/login', requestOptions)
             .then(response => response.json())
-            .then(result => console.log(result))
-            .catch(error => console.log('error', error));
+            .then(result => result.success ? history.push('/') : '')
+            .catch(() => setHasError(true));
     };
 
 
@@ -42,6 +47,9 @@ export default function Login ()
                 <input type='password' name='password' id='password' placeholder='Password'/>
                 <button onClick={sendLoginPassword}>Send</button>
             </form>
+            <div className="error" style={hasError ? {display: 'block'} : {display:'none'}}>
+                Incorrect username or password
+            </div>
         </div>
     );
 }

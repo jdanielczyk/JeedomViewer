@@ -14,3 +14,13 @@ input, button {
     border: solid 1px #aaa;
     border-radius: 6px;
 }
+
+.error {
+    padding: 16px;
+
+    border: solid 1px red;
+    border-radius: 6px;
+
+    background-color: rgb(230, 184, 184);
+    color: red;
+}
