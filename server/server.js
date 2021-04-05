@@ -6,6 +6,7 @@ const port = 4000;
 const path = require('path');
 // eslint-disable-next-line no-undef
 const users = require('./user');
+const cors = require('cors');
 
 
 // Configure passport local strategy
@@ -51,12 +52,13 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: false, save
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors());
 
 
 //api
 app.post('/api/login', 
     passport.authenticate('local'),
-    (req, res) => res.json('connecté ! cookie envoyé !')
+    (req, res) => res.json({success:true})
 );
 
 app.get('/',(req,res) => res.sendFile(path.join(__dirname, '../build', 'index.html')));
