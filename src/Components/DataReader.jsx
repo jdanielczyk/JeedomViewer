@@ -19,7 +19,7 @@ export const getFormatedDateTime = () =>
 };
 
 
-export function DataReader({ commandId, title, isTemp }) 
+export default function DataReader({ commandId, title, isTemp }) 
 {
     // Default useState
     const [dataFromJeedomApi, setDataFromJeedomApi] = useState('');
