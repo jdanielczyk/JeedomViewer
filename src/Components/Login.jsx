@@ -33,7 +33,7 @@ export default function Login ()
             redirect: 'follow'
         };
 
-        fetch('http://localhost:4000/api/login', requestOptions)
+        fetch('/api/login', requestOptions)
             .then(response => response.json())
             .then(result => result.success ? history.push('/') : '')
             .catch(() => setHasError(true));
