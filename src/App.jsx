@@ -18,7 +18,6 @@ function App()
             <Link to='/login'>Login</Link>
             <Switch>
                 <Route exact path='/'>
-                    {/* <div>test</div> */}
                     <div className="App">
                         <DataReader title="Mode" commandId="266" />
                         <DataReader title="Température bureau" commandId="640" isTemp={true}/>
@@ -28,9 +27,6 @@ function App()
                 </Route>
                 <Route path='/login'>
                     <Login/>
-                </Route>
-                <Route path='/prout'>
-                    prout
                 </Route>
             </Switch>
         </Router>

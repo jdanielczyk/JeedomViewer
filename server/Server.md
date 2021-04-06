@@ -8,3 +8,4 @@ Provide login api with passport for secure React App
 - passport
 - passport-local
 - body-parser
+- npm install connect-ensure-login

@@ -62,6 +62,16 @@ app.post('/api/login',
     (req, res) => res.json({success:true})
 );
 
+
+app.get('/api/test',
+    // eslint-disable-next-line no-undef
+    require('connect-ensure-login').ensureLoggedIn(),
+    (req,res) => 
+    {
+        res.json('ok');
+    }
+);
+
 // eslint-disable-next-line no-undef
 app.get('/',(req,res) => res.sendFile(path.join(__dirname, '../build', 'index.html')));
 
