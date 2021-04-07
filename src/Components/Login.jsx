@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import React, {useState} from 'react';
 import {useHistory} from 'react-router-dom';
 
 import './Login.css';
 
-export default function Login () 
+const Login = ({onLogin}) =>
 {
     let history = useHistory();
     const [hasError, setHasError] = useState(false);
@@ -35,7 +36,18 @@ export default function Login ()
 
         fetch('http://localhost:4000/api/login', requestOptions)
             .then(response => response.json())
-            .then(result => result.success ? history.push('/') : '')
+            .then(result => 
+            {
+                if(result.success)
+                {
+                    history.push('/');
+                    onLogin(true);
+                }
+                else
+                {
+                    onLogin(false);
+                }
+            })
             .catch(() => setHasError(true));
     };
 
@@ -52,4 +64,6 @@ export default function Login ()
             </div>
         </div>
     );
-}
+};
+
+export default Login;
