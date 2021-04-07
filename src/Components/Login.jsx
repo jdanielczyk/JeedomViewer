@@ -40,8 +40,8 @@ const Login = ({onLogin}) =>
             {
                 if(result.success)
                 {
-                    history.push('/');
                     onLogin(true);
+                    history.push('/');
                 }
                 else
                 {

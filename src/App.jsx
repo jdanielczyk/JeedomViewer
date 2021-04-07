@@ -26,7 +26,6 @@ const BaseView = () =>
 
 const App = () =>
 {
-    // let history = useHistory();
     const [userIsAuthenticate, setUserIsAuthenticate] = useState(false);
 
     return (
