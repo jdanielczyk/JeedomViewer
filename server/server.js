@@ -66,11 +66,30 @@ app.post('/api/login',
 app.get('/api/test',
     // eslint-disable-next-line no-undef
     require('connect-ensure-login').ensureLoggedIn(),
-    (req,res) => 
+    (req,res) => res.json('ok')
+);
+
+
+app.get('/api/jeedomdata/:id',
+    // eslint-disable-next-line no-undef
+    require('connect-ensure-login').ensureLoggedIn(),
+    (req, res) => 
     {
-        res.json('ok');
+        // eslint-disable-next-line no-undef
+        const config = require('./config.json');
+
+        // eslint-disable-next-line no-undef
+        const unirest = require('unirest');
+        unirest.get(`${config.jeedom_url}&type=cmd&id=${req.params.id}`)
+            .end((result) =>
+            { 
+                if (result.error) throw new Error(result.error); 
+                res.json(result.raw_body);
+            });
+        // res.json('data');
     }
 );
+
 
 // eslint-disable-next-line no-undef
 app.get('/',(req,res) => res.sendFile(path.join(__dirname, '../build', 'index.html')));
