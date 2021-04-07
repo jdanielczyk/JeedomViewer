@@ -11,7 +11,7 @@ import './App.css';
 import Login from './Components/Login';
 import DataReader from './Components/DataReader';
 
-function App() 
+const App = () =>
 {
     return (
         <Router>
@@ -31,6 +31,6 @@ function App()
             </Switch>
         </Router>
     );
-}
+};
 
 export default App;
