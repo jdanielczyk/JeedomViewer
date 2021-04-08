@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
     BrowserRouter as Router,
     Switch,
@@ -29,7 +29,7 @@ const BaseView = () =>
 
 const App = () =>
 {
-    const [userIsAuthenticate, setUserIsAuthenticate] = useState(false);
+    // const [userIsAuthenticate, setUserIsAuthenticate] = useState(false);
     const auth = useAuth();
 
     return (
@@ -37,9 +37,10 @@ const App = () =>
             <Link to='/login'>Login</Link>
             <div>User:{JSON.stringify(auth)}</div>
             <Switch>
-                <Route exact path='/' render={()=> userIsAuthenticate ? (<BaseView />) : ((<Redirect to={{pathname:'/login'}}/>))}/>
+                <Route exact path='/' render={()=> auth.user ? (<BaseView />) : ((<Redirect to={{pathname:'/login'}}/>))}/>
                 <Route path='/login'>
-                    <Login onLogin={(isAuthenticate) => setUserIsAuthenticate(isAuthenticate)}/>
+                    {/* <Login onLogin={(isAuthenticate) => setUserIsAuthenticate(isAuthenticate)}/> */}
+                    <Login />
                 </Route>
             </Switch>
         </Router>

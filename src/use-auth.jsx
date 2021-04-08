@@ -17,17 +17,38 @@ export const ProvideAuth = ({children}) =>
 
 const useProvideAuth = () =>
 {
-    const [user, setUser] = useState({username:'John'});
-
-    const signIn = () =>
+    const [user, setUser] = useState(null);
+    
+    const signIn = (username, password, callback) =>
     {
-        setUser({username:'John2'});
+        let myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
+
+        let urlencoded = new URLSearchParams();
+        urlencoded.append('username', username);
+        urlencoded.append('password', password);
+
+        const requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: urlencoded,
+            redirect: 'follow'
+        };
+
+        fetch('http://localhost:4000/api/login', requestOptions)
+            .then(response => response.json())
+            .then(result => 
+            {
+                if(result.success)
+                {
+                    setUser(result.success);
+                    callback();                    
+                }
+            })
+            .catch((err) => console.error(err));
     };
 
-    const signOut = () =>
-    {
-        setUser(null);
-    };
+    const signOut = () => setUser(null);
 
     return {user, signIn, signOut};
 };
