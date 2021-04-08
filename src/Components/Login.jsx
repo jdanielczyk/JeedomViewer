@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useHistory} from 'react-router-dom';
 
 import './Login.css';
@@ -17,11 +17,14 @@ const Login = () =>
         e.preventDefault();
         const username = document.querySelector('#username').value;
         const password = document.querySelector('#password').value;
-        auth.signIn(username,password, () =>
-        {
-            if(auth.user) history.push('/');
-        });
+        auth.signIn(username,password);
     };
+
+
+    useEffect(()=>
+    {
+        if(auth.user) history.push('/');
+    }, [auth.user]);
 
 
     return (

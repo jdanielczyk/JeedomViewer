@@ -19,7 +19,7 @@ const useProvideAuth = () =>
 {
     const [user, setUser] = useState(null);
     
-    const signIn = (username, password, callback) =>
+    const signIn = (username, password) =>
     {
         let myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
@@ -37,14 +37,7 @@ const useProvideAuth = () =>
 
         fetch('http://localhost:4000/api/login', requestOptions)
             .then(response => response.json())
-            .then(result => 
-            {
-                if(result.success)
-                {
-                    setUser(result.success);
-                    callback();                    
-                }
-            })
+            .then(result => setUser(result.success))
             .catch((err) => console.error(err));
     };
 

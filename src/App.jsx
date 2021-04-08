@@ -33,9 +33,9 @@ const App = () =>
 
     return (
         <Router>
-            <Link to='/login'>Login</Link>
+            {/* <Link to='/login'>Login</Link> */}
             {
-                auth.user ? <button onClick={()=>auth.signOut()}>Logout</button> : ''
+                auth.user ? <button onClick={()=>auth.signOut()}>Logout</button> : <Link to='/login'>Login</Link>
             }
             <div>User:{JSON.stringify(auth)}</div>
             <Switch>
