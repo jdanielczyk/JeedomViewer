@@ -29,17 +29,18 @@ const BaseView = () =>
 
 const App = () =>
 {
-    // const [userIsAuthenticate, setUserIsAuthenticate] = useState(false);
     const auth = useAuth();
 
     return (
         <Router>
             <Link to='/login'>Login</Link>
+            {
+                auth.user ? <button onClick={()=>auth.signOut()}>Logout</button> : ''
+            }
             <div>User:{JSON.stringify(auth)}</div>
             <Switch>
                 <Route exact path='/' render={()=> auth.user ? (<BaseView />) : ((<Redirect to={{pathname:'/login'}}/>))}/>
                 <Route path='/login'>
-                    {/* <Login onLogin={(isAuthenticate) => setUserIsAuthenticate(isAuthenticate)}/> */}
                     <Login />
                 </Route>
             </Switch>
