@@ -32,8 +32,6 @@ const App = () =>
     const [userIsAuthenticate, setUserIsAuthenticate] = useState(false);
     const auth = useAuth();
 
-    console.log('auth:',auth);
-
     return (
         <Router>
             <Link to='/login'>Login</Link>
