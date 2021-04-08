@@ -4,7 +4,7 @@ import {useHistory} from 'react-router-dom';
 
 import './Login.css';
 
-const Login = ({onLogin}) =>
+const Login = ({onLogin: onLoginCallback}) =>
 {
     let history = useHistory();
     const [hasError, setHasError] = useState(false);
@@ -40,12 +40,12 @@ const Login = ({onLogin}) =>
             {
                 if(result.success)
                 {
-                    onLogin(true);
+                    onLoginCallback(true);
                     history.push('/');
                 }
                 else
                 {
-                    onLogin(false);
+                    onLoginCallback(false);
                 }
             })
             .catch(() => setHasError(true));
