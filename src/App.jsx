@@ -9,6 +9,8 @@ import {
 
 import './App.css';
 
+import {useAuth} from './use-auth';
+
 import Login from './Components/Login';
 import DataReader from './Components/DataReader';
 
@@ -24,13 +26,18 @@ const BaseView = () =>
     );
 };
 
+
 const App = () =>
 {
     const [userIsAuthenticate, setUserIsAuthenticate] = useState(false);
+    const auth = useAuth();
+
+    console.log('auth:',auth);
 
     return (
         <Router>
             <Link to='/login'>Login</Link>
+            <div>User:{JSON.stringify(auth)}</div>
             <Switch>
                 <Route exact path='/' render={()=> userIsAuthenticate ? (<BaseView />) : ((<Redirect to={{pathname:'/login'}}/>))}/>
                 <Route path='/login'>
