@@ -58,15 +58,24 @@ app.use(cors());
 
 //api
 app.post('/api/login', 
-    passport.authenticate('local'),
+    passport.authenticate('local',{failureRedirect:'/'}), 
     (req, res) => res.json({success:true})
 );
 
 
-app.get('/api/test',
+app.get('/api/logout',
+    (req,res) => 
+    {
+        req.logOut();
+        res.json({logout:true});
+    }
+);
+
+
+app.get('/api/isAuthent', 
     // eslint-disable-next-line no-undef
     require('connect-ensure-login').ensureLoggedIn(),
-    (req,res) => res.json('ok')
+    (req,res) => res.json({success:true})
 );
 
 
@@ -86,7 +95,6 @@ app.get('/api/jeedomdata/:id',
                 if (result.error) throw new Error(result.error); 
                 res.json(result.raw_body);
             });
-        // res.json('data');
     }
 );
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     BrowserRouter as Router,
     Switch,
@@ -30,6 +30,13 @@ const BaseView = () =>
 const App = () =>
 {
     const auth = useAuth();
+
+
+    useEffect(()=>
+    {
+        auth.getAuthenUser();
+    },[auth.user]);
+
 
     return (
         <Router>

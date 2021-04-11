@@ -31,7 +31,7 @@ export default function DataReader({ commandId, title, isTemp })
     {
         // fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${commandId}`)
         // eslint-disable-next-line no-undef
-        fetch('http://localhost:4000/api/jeedomdata/' + commandId)
+        fetch('/api/jeedomdata/' + commandId)
             .then((response) => response.text())
             .then((dataFromJeedomApi) => onSuccessFetchedDataFromJeedomApi(dataFromJeedomApi))
             .catch((error) => setErrorMessage('Erreur: ' + error));

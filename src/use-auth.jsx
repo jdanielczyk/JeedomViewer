@@ -7,6 +7,7 @@ export const useAuth = ()  =>
     return useContext(AuthContext);
 };
 
+
 // eslint-disable-next-line react/prop-types
 export const ProvideAuth = ({children}) =>
 {
@@ -35,13 +36,35 @@ const useProvideAuth = () =>
             redirect: 'follow'
         };
 
-        fetch('http://localhost:4000/api/login', requestOptions)
+        fetch('/api/login', requestOptions)
             .then(response => response.json())
             .then(result => setUser(result.success))
             .catch((err) => console.error(err));
     };
 
-    const signOut = () => setUser(null);
 
-    return {user, signIn, signOut};
+    const signOut = () => 
+    {
+        fetch('/api/logout', {method:'GET', redirect:'follow'})
+            .then(response => response.json())
+            .then(() => setUser(null))
+            .catch((err) => console.error(err));
+    };
+    
+
+    const getAuthenUser = () => 
+    {
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+
+        fetch('/api/isAuthent', requestOptions)
+            .then(response => response.json())
+            .then(result => setUser(result.success))
+            .catch(error => console.log('error', error));
+    };
+
+
+    return {user, signIn, signOut, getAuthenUser};
 };
