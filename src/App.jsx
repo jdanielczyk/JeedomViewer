@@ -40,11 +40,9 @@ const App = () =>
 
     return (
         <Router>
-            {/* <Link to='/login'>Login</Link> */}
             {
                 auth.user ? <button onClick={()=>auth.signOut()}>Logout</button> : <Link to='/login'>Login</Link>
             }
-            <div>User:{JSON.stringify(auth)}</div>
             <Switch>
                 <Route exact path='/' render={()=> auth.user ? (<BaseView />) : ((<Redirect to={{pathname:'/login'}}/>))}/>
                 <Route path='/login'>
