@@ -38,13 +38,19 @@ const App = () =>
     },[auth.user]);
 
 
+    const renderHome = () => 
+    {
+        return auth.user ? <BaseView /> : <Redirect to={{ pathname: '/login' }} />;
+    };
+
+    
     return (
         <Router>
             {
                 auth.user ? <button onClick={()=>auth.signOut()}>Logout</button> : <Link to='/login'>Login</Link>
             }
             <Switch>
-                <Route exact path='/' render={()=> auth.user ? (<BaseView />) : ((<Redirect to={{pathname:'/login'}}/>))}/>
+                <Route exact path='/' render={renderHome}/>
                 <Route path='/login'>
                     <Login />
                 </Route>
