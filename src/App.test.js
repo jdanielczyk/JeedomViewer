@@ -1,14 +1,35 @@
 import { render, screen } from '@testing-library/react';
+
+import {rest} from 'msw'
+import {setupServer} from 'msw/node';
+
 import App from './App';
 
+const server = setupServer(
+    rest.post('/login', (req, res, ctx) => 
+    {
+        return res(ctx.json({success:true}))
+    })
+);
 
-test('REACT_APP_JEEDOM_URL exists', () => 
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+
+
+test('user is not authent return to login', () => 
 {
-    expect(process.env.REACT_APP_JEEDOM_URL).not.toBe(undefined);
+    //return to login
+    expect(screen.getByText('Login')).toBeInTheDocument();
+    throw new Error();
 });
 
 
-test('REACT_APP_JEEDOM_URL is not empty', ()=> 
+test('user is authent', () => 
 {
-    expect(process.env.REACT_APP_JEEDOM_URL).not.toBe('');
+    //display data
+    throw new Error();
 });
+
+

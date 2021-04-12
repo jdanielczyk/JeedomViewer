@@ -21,10 +21,7 @@ const Login = () =>
     };
 
 
-    useEffect(()=>
-    {
-        if(auth.user) history.push('/');
-    }, [auth.user]);
+    useEffect(() => auth.user ? history.push('/') : null, [auth.user]);
 
 
     return (
