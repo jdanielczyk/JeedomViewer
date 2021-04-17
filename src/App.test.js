@@ -1,35 +1,29 @@
-import { render, screen } from '@testing-library/react';
-
-import {rest} from 'msw'
-import {setupServer} from 'msw/node';
-
+import { act, render, screen } from '@testing-library/react';
+import {ProvideAuth} from './use-auth'
 import App from './App';
 
-const server = setupServer(
-    rest.post('/login', (req, res, ctx) => 
-    {
-        return res(ctx.json({success:true}))
-    })
-);
 
-beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
+beforeEach(() => fetch.resetMocks());
 
 
-
-test('user is not authent return to login', () => 
+test('user is not authent return to login', async () => 
 {
+    // mockUser = null;
     //return to login
-    expect(screen.getByText('Login')).toBeInTheDocument();
-    throw new Error();
+    fetch.mockResponseOnce({success:false});
+
+    await act(async () => render(
+        <ProvideAuth>
+            <App />
+        </ProvideAuth>));
+    expect(screen.getAllByText(/Login/g)).toHaveLength(2);
 });
 
 
-test('user is authent', () => 
-{
-    //display data
-    throw new Error();
-});
+// test('user is authent', () => 
+// {
+//     //display data
+//     throw new Error();
+// });
 
 

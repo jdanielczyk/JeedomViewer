@@ -1,8 +1,8 @@
 {
     "env": {
         "browser": true,
-        "es2021": true//,
-        // "jest/global": true
+        "es2021": true,
+        "jest/global": true
     },
     "extends": [
         "eslint:recommended",

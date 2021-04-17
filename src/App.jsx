@@ -9,7 +9,7 @@ import {
 
 import './App.css';
 
-import {useAuth} from './use-auth';
+import { useAuth } from './use-auth';
 
 import Login from './Components/Login';
 import DataReader from './Components/DataReader';
@@ -30,7 +30,6 @@ const BaseView = () =>
 const App = () =>
 {
     const auth = useAuth();
-
 
     useEffect(()=>
     {
