@@ -33,7 +33,6 @@ const App = () => {
                   ? <button onClick={() => auth.signOut()}>Logout</button>
                   : <Link to='/login'>Log me in</Link>
             }
-            LoginCount: {auth.loginAttemptCount}
             <Switch>
                 <Route exact path='/' render={renderHome}/>
                 <Route path='/login'>
