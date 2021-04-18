@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
 import './DataReader.css'
+import { getFormatedDateTime } from '../../DateFormat'
 
 export const getTemperatureClass = (temperature) => {
   let temperatureClass = 'good'
@@ -9,19 +10,14 @@ export const getTemperatureClass = (temperature) => {
   return temperatureClass
 }
 
-export const getFormatedDateTime = () => {
-  const date = new Date()
-  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
-}
-
-export default function DataReader ({ commandId, title, isTemp }) {
+export function DataReader ({ commandId, title, isTemp }) {
   // Default useState
+  const refreshInterval = 30000
   const [dataFromJeedomApi, setDataFromJeedomApi] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [lastUpdate, setLastUpdate] = useState(getFormatedDateTime())
 
   const fetchDataFromJeedomApi = async () => {
-    // fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${commandId}`)
     // eslint-disable-next-line no-undef
     fetch('/api/jeedomdata/' + commandId)
       .then((response) => response.json())
@@ -41,7 +37,7 @@ export default function DataReader ({ commandId, title, isTemp }) {
 
     const timeout = setTimeout(() => {
       fetchDataFromJeedomApi()
-    }, 30000)
+    }, refreshInterval)
 
     return () => clearTimeout(timeout)
   })

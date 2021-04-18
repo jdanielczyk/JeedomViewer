@@ -4,11 +4,10 @@ import { useHistory } from 'react-router-dom'
 
 import './Login.css'
 
-import { useAuth } from '../use-auth'
+import { useAuth } from '../../use-auth'
 
 const Login = () => {
   const auth = useAuth()
-
   const history = useHistory()
 
   const sendLoginPassword = (e) => {

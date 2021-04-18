@@ -4,7 +4,9 @@ module.exports = {
     es2021: true
   },
   extends: [
+    // 'eslint:recommanded',
     'plugin:react/recommended',
+    'plugin:testing-library/react',
     'standard'
   ],
   parserOptions: {
