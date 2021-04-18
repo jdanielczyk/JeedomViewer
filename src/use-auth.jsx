@@ -14,8 +14,10 @@ export const ProvideAuth = ({ children }) => {
 
 const useProvideAuth = () => {
   const [user, setUser] = useState(null)
+  const [loginAttemptCount, setLoginAttemptCount] = useState(0)
 
   const signIn = (username, password) => {
+    setLoginAttemptCount(loginAttemptCount + 1)
     const myHeaders = new Headers()
     myHeaders.append('Content-Type', 'application/x-www-form-urlencoded')
 
@@ -32,7 +34,10 @@ const useProvideAuth = () => {
 
     fetch('/api/login', requestOptions)
       .then(response => response.json())
-      .then(result => setUser(result.success))
+      .then(result => {
+        setUser(result.success)
+        setLoginAttemptCount(0)
+      })
       .catch((err) => console.error(err))
   }
 
@@ -55,5 +60,5 @@ const useProvideAuth = () => {
       .catch(error => console.log('error', error))
   }
 
-  return { user, signIn, signOut, getAuthenUser }
+  return { user, loginAttemptCount, signIn, signOut, getAuthenUser }
 }

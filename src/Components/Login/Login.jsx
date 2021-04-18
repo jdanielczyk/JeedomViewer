@@ -26,7 +26,7 @@ const Login = () => {
                 <input type='password' name='password' id='password' placeholder='Password'/>
                 <button onClick={sendLoginPassword}>Login</button>
             </form>
-            <div className="error" style={auth.user !== true ? { display: 'block' } : { display: 'none' }}>
+            <div className="error" style={(auth.user !== true && auth.loginAttemptCount > 0) ? { display: 'block' } : { display: 'none' }}>
                 Incorrect username or password
             </div>
         </div>

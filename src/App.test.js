@@ -2,7 +2,6 @@ import React from 'react'
 import { act, render, screen, fireEvent } from '@testing-library/react'
 import { ProvideAuth } from './use-auth'
 import App from './App'
-import { flushSync } from 'react-dom'
 
 beforeEach(() => fetch.resetMocks())
 
@@ -14,20 +13,19 @@ test('user is not authent return to login', async () => {
             <App />
         </ProvideAuth>))
 
-  expect(screen.getAllByText(/Login/g)).toHaveLength(2)
+  expect(screen.getByText(/Log me in/g)).toBeInTheDocument()
 })
 
 test('user is authent', async () => {
-  fetch.mockResponse(JSON.stringify({ success: true }))
+  fetch.mockResponse({ success: true })
 
   await act(async () => render(
-        <ProvideAuth>
-            <App />
-        </ProvideAuth>))
+    <ProvideAuth>
+      <App />
+    </ProvideAuth>))
 
-  await flushSync()
-  fireEvent.click(screen.getByRole('button', /Login/i))
+  fireEvent.click(screen.getByText('Log me in'))
 
-  expect(fetch).toHaveBeenCalledTimes(2)
-  // expect(screen.getAllByAltText(/Logout/g)).toHaveLength(1)
+  expect(fetch).toHaveBeenCalledTimes(1)
+  expect(screen.getAllByAltText(/Logout/g)).toHaveLength(1)
 })

@@ -18,12 +18,12 @@ const Strategy = require('passport-local').Strategy
 const bodyParser = require('body-parser')
 
 passport.use(new Strategy(
-  (username, password, cb) => {
+  (username, password, done) => {
     users.findByUsername(username, (err, user) => {
-      if (err) return cb(err)
-      if (!user) return cb(null, false)
-      if (user.password !== password) return cb(null, false)
-      return cb(null, user)
+      if (err) return done(err)
+      if (!user) return done(null, false)
+      if (user.password !== password) return done(null, false, { message: 'Bad password' })
+      return done(null, user)
     })
   })
 )
@@ -50,7 +50,7 @@ app.use(cors())
 
 // api
 app.post('/api/login',
-  passport.authenticate('local', { failureRedirect: '/' }),
+  passport.authenticate('local', { failureRedirect: '/', failureFlash: true }),
   (req, res) => res.json({ success: true })
 )
 

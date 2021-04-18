@@ -1,5 +1,5 @@
 import React from 'react'
-import DataReader from '../DataReader/DataReader'
+import { DataReader } from '../DataReader/DataReader'
 
 const Home = () => {
   return (

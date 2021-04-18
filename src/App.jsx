@@ -18,7 +18,7 @@ const App = () => {
   const auth = useAuth()
 
   useEffect(() => {
-    auth.getAuthenUser()
+    if (auth.loginAttemptCount > 0) auth.getAuthenUser()
   }, [auth.user])
 
   const renderHome = () => {
@@ -28,12 +28,16 @@ const App = () => {
   return (
         <Router>
             {
-                auth.user ? <button onClick={() => auth.signOut()}>Logout</button> : <Link to='/login'>Login</Link>
+                // duplicate renderHome ?
+                auth.user
+                  ? <button onClick={() => auth.signOut()}>Logout</button>
+                  : <Link to='/login'>Log me in</Link>
             }
+            LoginCount: {auth.loginAttemptCount}
             <Switch>
                 <Route exact path='/' render={renderHome}/>
                 <Route path='/login'>
-                    <Login />
+                    <Login/>
                 </Route>
             </Switch>
         </Router>
