@@ -1,39 +1,34 @@
-import { act, render, screen, fireEvent } from '@testing-library/react';
+import React from 'react'
+import { act, render, screen, fireEvent } from '@testing-library/react'
 import { ProvideAuth } from './use-auth'
-import App from './App';
-import { flushSync } from 'react-dom';
+import App from './App'
+import { flushSync } from 'react-dom'
 
-beforeEach(() => fetch.resetMocks());
+beforeEach(() => fetch.resetMocks())
 
-test('user is not authent return to login', async () => 
-{
-    fetch.mockResponse({success:false});
+test('user is not authent return to login', async () => {
+  fetch.mockResponse({ success: false })
 
-    await act(async () => render(
+  await act(async () => render(
         <ProvideAuth>
             <App />
-        </ProvideAuth>));
+        </ProvideAuth>))
 
-    expect(screen.getAllByText(/Login/g)).toHaveLength(2);
-});
+  expect(screen.getAllByText(/Login/g)).toHaveLength(2)
+})
 
+test('user is authent', async () => {
+  fetch.mockResponse(JSON.stringify({ success: true }))
 
-test('user is authent', async () => 
-{
-    fetch.mockResponse(JSON.stringify({success:true}));
-
-    await act(async () => render(
+  await act(async () => render(
         <ProvideAuth>
             <App />
-        </ProvideAuth>));
+        </ProvideAuth>))
 
+  fireEvent.click(screen.getByRole('button', /Login/i))
 
-    fireEvent.click(screen.getByRole('button',/Login/i));
+  await flushSync()
 
-    await flushSync();
-
-    expect(fetch).toHaveBeenCalledTimes(2);
-    expect(screen.getAllByAltText(/Logout/g)).toHaveLength(1);
-});
-
-
+  expect(fetch).toHaveBeenCalledTimes(2)
+  expect(screen.getAllByAltText(/Logout/g)).toHaveLength(1)
+})

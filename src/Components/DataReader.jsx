@@ -1,76 +1,60 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from 'react';
-import './DataReader.css';
+import React, { useEffect, useState } from 'react'
+import './DataReader.css'
 
+export const getTemperatureClass = (temperature) => {
+  let temperatureClass = 'good'
+  if (temperature < 18) temperatureClass = 'cold'
+  if (temperature > 23) temperatureClass = 'hot'
+  return temperatureClass
+}
 
-export const getTemperatureClass = (temperature) =>
-{
-    let temperatureClass = 'good';
-    if(temperature < 18 ) temperatureClass = 'cold'; 
-    if(temperature > 23) temperatureClass = 'hot';
-    return temperatureClass;
-};
+export const getFormatedDateTime = () => {
+  const date = new Date()
+  return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+}
 
+export default function DataReader ({ commandId, title, isTemp }) {
+  // Default useState
+  const [dataFromJeedomApi, setDataFromJeedomApi] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [lastUpdate, setLastUpdate] = useState(getFormatedDateTime())
 
-export const getFormatedDateTime = () =>
-{
-    var date = new Date();
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-};
+  const fetchDataFromJeedomApi = async () => {
+    // fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${commandId}`)
+    // eslint-disable-next-line no-undef
+    fetch('/api/jeedomdata/' + commandId)
+      .then((response) => response.json())
+      .then((dataFromJeedomApi) => onSuccessFetchedDataFromJeedomApi(dataFromJeedomApi))
+      .catch((error) => setErrorMessage('Erreur: ' + error))
+  }
 
+  const onSuccessFetchedDataFromJeedomApi = (data) => {
+    setErrorMessage('')
+    setDataFromJeedomApi(data)
+    setLastUpdate(getFormatedDateTime())
+  }
 
-export default function DataReader({ commandId, title, isTemp }) 
-{
-    // Default useState
-    const [dataFromJeedomApi, setDataFromJeedomApi] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [lastUpdate, setLastUpdate] = useState(getFormatedDateTime());
-    
+  useEffect(() => {
+    // Don’t wait the first setTimeout for fetch
+    if (dataFromJeedomApi === '') fetchDataFromJeedomApi()
 
-    const fetchDataFromJeedomApi = async () => 
-    {
-        // fetch(`${process.env.REACT_APP_JEEDOM_URL}&type=cmd&id=${commandId}`)
-        // eslint-disable-next-line no-undef
-        fetch('/api/jeedomdata/' + commandId)
-            .then((response) => response.json())
-            .then((dataFromJeedomApi) => onSuccessFetchedDataFromJeedomApi(dataFromJeedomApi))
-            .catch((error) => setErrorMessage('Erreur: ' + error));
-    };
+    const timeout = setTimeout(() => {
+      fetchDataFromJeedomApi()
+    }, 30000)
 
+    return () => clearTimeout(timeout)
+  })
 
-    const onSuccessFetchedDataFromJeedomApi = (data) => 
-    {
-        setErrorMessage('');
-        setDataFromJeedomApi(data);
-        setLastUpdate(getFormatedDateTime());
-    };
-    
+  if (errorMessage !== '') {
+    return <div>Erreur {errorMessage}</div>
+  }
 
-    useEffect(() => 
-    {
-        // Don’t wait the first setTimeout for fetch
-        if(dataFromJeedomApi ==='') fetchDataFromJeedomApi();
-
-        const timeout = setTimeout(()=>
-        {
-            fetchDataFromJeedomApi();
-        }, 30000);
-
-        return () => clearTimeout(timeout);
-    });
-
-
-    if (errorMessage !== '') 
-    {
-        return <div>Erreur {errorMessage}</div>;
-    }
-    
-
-    return (
+  return (
         <div className={isTemp ? 'card ' + getTemperatureClass(dataFromJeedomApi) : 'card'}>
             <h2>{title}</h2>
             <div className="card-data">{dataFromJeedomApi}</div>
             <div className="card-update">{lastUpdate}</div>
         </div>
-    );
+  )
 }

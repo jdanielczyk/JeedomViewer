@@ -1,70 +1,59 @@
-import React,{useContext, createContext, useState} from 'react';
+import React, { useContext, createContext, useState } from 'react'
 
-const AuthContext = createContext();
+const AuthContext = createContext()
 
-export const useAuth = ()  => 
-{
-    return useContext(AuthContext);
-};
-
+export const useAuth = () => {
+  return useContext(AuthContext)
+}
 
 // eslint-disable-next-line react/prop-types
-export const ProvideAuth = ({children}) =>
-{
-    const auth = useProvideAuth();
-    return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
-};
+export const ProvideAuth = ({ children }) => {
+  const auth = useProvideAuth()
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>
+}
 
+const useProvideAuth = () => {
+  const [user, setUser] = useState(null)
 
-const useProvideAuth = () =>
-{
-    const [user, setUser] = useState(null);
-    
-    const signIn = (username, password) =>
-    {
-        let myHeaders = new Headers();
-        myHeaders.append('Content-Type', 'application/x-www-form-urlencoded');
+  const signIn = (username, password) => {
+    const myHeaders = new Headers()
+    myHeaders.append('Content-Type', 'application/x-www-form-urlencoded')
 
-        let urlencoded = new URLSearchParams();
-        urlencoded.append('username', username);
-        urlencoded.append('password', password);
+    const urlencoded = new URLSearchParams()
+    urlencoded.append('username', username)
+    urlencoded.append('password', password)
 
-        const requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: urlencoded,
-            redirect: 'follow'
-        };
+    const requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: urlencoded,
+      redirect: 'follow'
+    }
 
-        fetch('/api/login', requestOptions)
-            .then(response => response.json())
-            .then(result => setUser(result.success))
-            .catch((err) => console.error(err));
-    };
+    fetch('/api/login', requestOptions)
+      .then(response => response.json())
+      .then(result => setUser(result.success))
+      .catch((err) => console.error(err))
+  }
 
+  const signOut = () => {
+    fetch('/api/logout', { method: 'GET', redirect: 'follow' })
+      .then(response => response.json())
+      .then(() => setUser(null))
+      .catch((err) => console.error(err))
+  }
 
-    const signOut = () => 
-    {
-        fetch('/api/logout', {method:'GET', redirect:'follow'})
-            .then(response => response.json())
-            .then(() => setUser(null))
-            .catch((err) => console.error(err));
-    };
-    
+  const getAuthenUser = () => {
+    const requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    }
 
-    const getAuthenUser = () => 
-    {
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-        };
+    fetch('/api/isAuthent', requestOptions)
+      .then(response => response.json())
+      .then(result => setUser(result.success))
+      .catch(error => console.log('error', error))
+  }
 
-        fetch('/api/isAuthent', requestOptions)
-            .then(response => response.json())
-            .then(result => setUser(result.success))
-            .catch(error => console.log('error', error));
-    };
-
-
-    return {user, signIn, signOut, getAuthenUser};
-};
+  return { user, signIn, signOut, getAuthenUser }
+}
