@@ -1,31 +1,47 @@
 import React from 'react'
-import { act, render, screen, fireEvent } from '@testing-library/react'
+
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
+
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+
+import '@testing-library/jest-dom/extend-expect'
+
 import { ProvideAuth } from './use-auth'
 import App from './App'
 
-beforeEach(() => fetch.resetMocks())
+const server = setupServer(
+  rest.post('*', (req, res, ctx) => {
+    return res(ctx.json({ success: true }))
+  })
+)
 
-test('user is not authent return to login', async () => {
-  fetch.mockResponse({ success: false })
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 
-  await act(async () => render(
-        <ProvideAuth>
-            <App />
-        </ProvideAuth>))
+const appElement = <ProvideAuth><App/></ProvideAuth>
 
-  expect(screen.getByText(/Log me in/g)).toBeInTheDocument()
+test('user authent success', async () => {
+  server.use(
+    rest.post('/api/login', (req, res, ctx) => {
+      return res(ctx.json({ success: true }))
+    })
+  )
+
+  render(appElement)
+  fireEvent.click(screen.getByText('Login'))
+  await waitFor(() => screen.findByText('Logout'))
+  expect(screen.getByText('Logout')).toBeInTheDocument()
 })
 
-test('user is authent', async () => {
-  fetch.mockResponse({ success: true })
+test('usere authent failed', async () => {
+  server.use(rest.post('/api/login', (req, res, ctx) => {
+    return res(ctx.json({ success: false }))
+  }))
 
-  await act(async () => render(
-    <ProvideAuth>
-      <App />
-    </ProvideAuth>))
-
-  fireEvent.click(screen.getByText('Log me in'))
-
-  expect(fetch).toHaveBeenCalledTimes(1)
-  expect(screen.getAllByAltText(/Logout/g)).toHaveLength(1)
+  render(appElement)
+  fireEvent.click(screen.getByText('Login'))
+  await waitFor(() => screen.findByText('Login'))
+  expect(screen.getByText(/Incorrect/gi)).toBeInTheDocument()
 })

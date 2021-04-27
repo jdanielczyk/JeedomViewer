@@ -50,7 +50,7 @@ app.use(cors())
 
 // api
 app.post('/api/login',
-  passport.authenticate('local', { failureRedirect: '/', failureFlash: true }),
+  passport.authenticate('local'),
   (req, res) => res.json({ success: true })
 )
 
