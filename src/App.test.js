@@ -22,6 +22,11 @@ afterAll(() => server.close())
 
 const appElement = <ProvideAuth><App/></ProvideAuth>
 
+test('no error message on first launch', () => {
+  render(appElement)
+  expect(screen.queryAllByAltText(/Incorrect/gi)).toHaveLength(0)
+})
+
 test('user authent success', async () => {
   server.use(
     rest.post('/api/login', (req, res, ctx) => {

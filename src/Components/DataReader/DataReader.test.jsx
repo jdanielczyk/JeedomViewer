@@ -3,7 +3,19 @@ import React from 'react'
 import { act, render, screen } from '@testing-library/react'
 import { DataReader, getTemperatureClass } from './DataReader'
 
-beforeEach(() => fetch.resetMocks())
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
+
+const server = setupServer(
+  rest.post('*', (req, res, ctx) => {
+    return res(ctx.json({ success: true }))
+  })
+)
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+// beforeEach(() => fetch.resetMocks())
 
 test('getTemperatureClass must be good when > 18 and  < 23', () => {
   expect(getTemperatureClass(20)).toBe('good')
