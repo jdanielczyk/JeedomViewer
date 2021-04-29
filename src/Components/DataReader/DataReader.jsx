@@ -47,7 +47,7 @@ export function DataReader ({ commandId, title, isTemp }) {
   }
 
   return (
-        <div className={isTemp ? 'card ' + getTemperatureClass(dataFromJeedomApi) : 'card'}>
+        <div className={isTemp ? 'card ' + getTemperatureClass(dataFromJeedomApi) : 'card infos'}>
             <h2>{title}</h2>
             <div className="card-data">{dataFromJeedomApi}</div>
             <div className="card-update">{lastUpdate}</div>

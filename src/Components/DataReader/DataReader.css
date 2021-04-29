@@ -10,6 +10,8 @@
     padding: 16px;
 
     min-width: 250px;
+
+    color:#fff;
 }
 
 .card > h2 {
@@ -27,13 +29,17 @@
 }
 
 .good {
-    background-color: rgb(126, 204, 126);
+    background-color: #32cd32;
 }
 
 .hot {
-    background-color: rgb(204, 161, 126);
+    background-color: #FF7B36;
 }
 
 .cold {
-    background-color: rgb(126, 157, 204);
+    background-color: #00D3FF;
+}
+
+.infos {
+    background-color: #647c90 ;
 }
