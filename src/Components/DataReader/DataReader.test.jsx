@@ -7,15 +7,14 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 
 const server = setupServer(
-  rest.post('*', (req, res, ctx) => {
-    return res(ctx.json({ success: true }))
+  rest.get('/api/jeedomdata/:id', (req, res, ctx) => {
+    return res(ctx.json('Confort'))
   })
 )
 
 beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
-// beforeEach(() => fetch.resetMocks())
 
 test('getTemperatureClass must be good when > 18 and  < 23', () => {
   expect(getTemperatureClass(20)).toBe('good')
@@ -30,42 +29,25 @@ test('geTemperature must be hot when > 23', () => {
 })
 
 test('Mode must be confort', async () => {
-  fetch.mockResponseOnce(JSON.stringify('Confort'))
+  render(<DataReader commandId='266' />)
 
-  await act(async () => render(<DataReader commandId='266' />))
-
-  expect(fetch).toHaveBeenCalledTimes(1)
-  expect(screen.getByText(/Mode|Confort/gi)).toBeInTheDocument()
+  expect(await screen.findByText(/Mode|Confort/gi)).toBeInTheDocument()
 })
 
 test('title must be set', async () => {
-  fetch.mockResponseOnce(JSON.stringify('Confort'))
-
-  await act(async () => render(<DataReader title='Mode' commandId='266' />))
-
+  render(<DataReader title='Mode' commandId='266' />)
   expect(screen.getByText('Mode')).toBeInTheDocument()
 })
 
-test('mode variable must be refresh evry 30 seconds', async () => {
-  jest.useFakeTimers()
-  fetch.mockResponseOnce(JSON.stringify('Confort'))
-
-  await act(async () => render(<DataReader commandId='266' />))
-
-  expect(fetch).toHaveBeenCalledTimes(1)
-  await act(async () => jest.advanceTimersByTime(30000))
-
-  // +1 for first call before setTimeout ?
-  expect(fetch).toHaveBeenCalledTimes(2)
-
-  await act(async () => jest.advanceTimersByTime(30000))
-  expect(fetch).toHaveBeenCalledTimes(3)
-})
-
 test('display error on api abort', async () => {
-  fetch.mockAbortOnce()
+  // fetch.mockAbortOnce()
+  server.use(
+    rest.get('/api/jeedomdata/:id', (req, res, ctx) => {
+      return res(ctx.status(500))
+    })
+  )
 
-  await act(async () => render(<DataReader commandId='266' />))
+  render(<DataReader commandId='266' />)
 
-  expect(screen.getByText(/Erreur/gi)).toBeInTheDocument()
+  expect(await screen.findByText(/Erreur/gi)).toBeInTheDocument()
 })
